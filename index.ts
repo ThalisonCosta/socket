@@ -70,15 +70,17 @@ const products = {
 Bun.serve({
   port: 4444,
   fetch(req) {
-    const url = new URL(req.url);
-    switch (url.pathname) {
-      case "/":
-        return new Response("é o bun crlh");
-      case "/products":
-        return new Response(JSON.stringify(products))
-      default:
-        return new Response("Not Found!")
+    const { pathname } = new URL(req.url);
+    const { method } = req;
+
+    if (pathname === "/" && method === "GET") {
+      return new Response("é o bun crlh");
     }
+    if (pathname === "/products" && method === "POST") {
+
+      return new Response(JSON.stringify(products))
+    }
+    return new Response("Not Found!")
   },
 });
 
