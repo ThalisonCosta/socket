@@ -23,25 +23,17 @@ int main() {
     exit(1);
   }
 
-  char message[100];
-  while (1) {
-    printf("client: ");
-    fgets(message, sizeof(message), stdin);
+  const char *http_request = "GET / HTTP/1.1\r\n"
+                             "Host: localhost\r\n"
+                             "\r\n";
+  send(sock_fd, http_request, strlen(http_request), 0);
 
-    if (send(sock_fd, message, strlen(message), 0) < 0) {
-      printf("failed to send message\n");
-      exit(1);
-    }
-
-    memset(message, 0, sizeof(message));
-
-    char server_reply[2048];
-    if (recv(sock_fd, server_reply, 2048, 0) < 0) {
-      printf("failed to receive message\n");
-      exit(1);
-    }
-    printf("server: %s\n", server_reply);
+  char server_reply[2048];
+  if (recv(sock_fd, server_reply, 2048, 0) < 0) {
+    printf("failed to receive message\n");
+    exit(1);
   }
+  printf("Response: %s\n", server_reply);
 
   close(sock_fd);
   return 0;
