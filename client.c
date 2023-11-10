@@ -67,18 +67,18 @@ int main(int argc, char **argv) {
     exit(1);
   }
 
-  const char *http_request_format = "%s /%s HTTP/1.1\r\n"
-                                    "Host: %s\r\n"
-                                    "\r\n";
+  const char *request_string = "%s /%s HTTP/1.1\r\n"
+                               "Host: %s\r\n"
+                               "\r\n";
 
-  int final_request_length = snprintf(NULL, 0, http_request_format,
-                                      args.http_method, args.path, args.host) +
-                             1;
+  int request_length = snprintf(NULL, 0, request_string, args.http_method,
+                                args.path, args.host) +
+                       1;
 
-  char *http_request = (char *)malloc(final_request_length);
+  char *http_request = (char *)malloc(request_length);
 
-  snprintf(http_request, final_request_length, http_request_format,
-           args.http_method, args.path, args.host);
+  snprintf(http_request, request_length, request_string, args.http_method,
+           args.path, args.host);
 
   send(sock_fd, http_request, strlen(http_request), 0);
 
