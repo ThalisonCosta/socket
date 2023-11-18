@@ -10,6 +10,7 @@ typedef struct {
   char *http_method;
   char *path;
   char *host;
+  int port;
 } Args;
 
 Args parseCommandLineArgs(int argc, char *argv[]) {
@@ -37,6 +38,18 @@ Args parseCommandLineArgs(int argc, char *argv[]) {
   path_start++;
   args.path = path_start;
 
+  char *port_str = strchr(args.host, ':');
+  if (port_str) {
+    *port_str = '\0';
+    port_str++;
+    args.port = atoi(port_str);
+  }
+
+  if (args.port == 0) {
+    args.port = 80;
+  }
+
+
   return args;
 }
 
@@ -49,17 +62,10 @@ int main(int argc, char **argv) {
 
   Args args = parseCommandLineArgs(argc, argv);
 
-  int port;
-  char *port_str = strchr(args.host, ':');
-  if (port_str) {
-    *port_str = '\0';
-    port_str++;
-    port = atoi(port_str);
-  }
 
   struct sockaddr_in server;
-  server.sin_addr.s_addr = inet_addr("127.0.0.1");
-  server.sin_port = htons(port);
+  server.sin_addr.s_addr = inet_addr("127.0.0.1"); //TODO: accept remote host
+  server.sin_port = htons(args.port);
   server.sin_family = AF_INET;
 
   if (connect(sock_fd, (struct sockaddr *)&server, sizeof(server)) < 0) {
